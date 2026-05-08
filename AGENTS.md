@@ -13,6 +13,7 @@ Quick Split is a two-package npm workspace.
 - `server/src/services/` contains business logic, including bill splitting.
 - `server/src/seed.js` creates demo data.
 - `server/data/` is generated locally for the SQLite database and should not be treated as source code.
+- `.gitignore` excludes generated dependencies, frontend builds, logs, env files, and local SQLite data.
 
 No automated test directory exists yet. Add tests near the relevant module or under a clear `tests/` directory when introduced.
 
@@ -27,6 +28,15 @@ No automated test directory exists yet. Add tests near the relevant module or un
 - `npm run dev --workspace server` starts just the API in watch mode.
 
 There is currently no `npm test` script. Do not claim test coverage until a test runner is added.
+
+## Architecture Notes
+
+The app is a one-time restaurant bill splitter, not a long-term expense tracker. Participants and bill items can be created, edited, and deleted. Supported edit routes are:
+
+- `PUT /api/sessions/:sessionId/participants/:participantId`
+- `PUT /api/sessions/:sessionId/items/:itemId`
+
+Extras (`tax`, `serviceCharge`, and `tip`) are distributed proportionally by each participant's allocated item subtotal. If no eligible participant can receive an item or extra charge, the amount is reported as unassigned.
 
 ## Coding Style & Naming Conventions
 
@@ -47,7 +57,7 @@ Cover edge cases such as no eligible participants, zero extras, proportional tax
 
 ## Commit & Pull Request Guidelines
 
-This workspace currently has no Git history, so no local commit convention is established. Use clear imperative commit messages, for example `Add split summary API` or `Fix drink category allocation`.
+Use clear imperative commit messages, for example `Add split summary API` or `Fix drink category allocation`. The initial app commit is `64304bd Initial Quick Split app`.
 
 Pull requests should include:
 
@@ -55,6 +65,8 @@ Pull requests should include:
 - Manual verification steps, including commands run.
 - Screenshots for frontend UI changes.
 - Notes for database or API behavior changes.
+
+The GitHub remote is `origin` at `https://github.com/GV-droid/quick-split.git`. The repository is private and the default branch is `main`.
 
 ## Security & Configuration Tips
 
