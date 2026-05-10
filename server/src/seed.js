@@ -17,16 +17,18 @@ await db.delete(sessionCharges).where(eq(sessionCharges.sessionId, demoSession.i
 await db.insert(sessions).values(demoSession);
 
 await db.insert(participants).values([
-  { id: 'asha', sessionId: demoSession.id, name: 'Asha', isVeg: true, isNonVeg: false, drinks: false },
-  { id: 'ben', sessionId: demoSession.id, name: 'Ben', isVeg: true, isNonVeg: true, drinks: true },
-  { id: 'chris', sessionId: demoSession.id, name: 'Chris', isVeg: false, isNonVeg: true, drinks: true },
-  { id: 'diya', sessionId: demoSession.id, name: 'Diya', isVeg: true, isNonVeg: false, drinks: true },
+  { id: 'asha', sessionId: demoSession.id, name: 'Asha', isVeg: true, isNonVeg: false, drinks: false, dessert: true, alcohol: false },
+  { id: 'ben', sessionId: demoSession.id, name: 'Ben', isVeg: true, isNonVeg: true, drinks: true, dessert: true, alcohol: true },
+  { id: 'chris', sessionId: demoSession.id, name: 'Chris', isVeg: false, isNonVeg: true, drinks: true, dessert: false, alcohol: true },
+  { id: 'diya', sessionId: demoSession.id, name: 'Diya', isVeg: true, isNonVeg: false, drinks: true, dessert: true, alcohol: false },
 ]);
 
 await db.insert(items).values([
   { id: 'paneer', sessionId: demoSession.id, name: 'Paneer Tikka', amount: 420, category: 'veg' },
   { id: 'biryani', sessionId: demoSession.id, name: 'Chicken Biryani', amount: 620, category: 'nonveg' },
   { id: 'mocktails', sessionId: demoSession.id, name: 'Mocktails', amount: 540, category: 'drink' },
+  { id: 'brownie', sessionId: demoSession.id, name: 'Chocolate Brownie', amount: 300, category: 'dessert' },
+  { id: 'wine', sessionId: demoSession.id, name: 'House Wine', amount: 760, category: 'alcohol' },
   { id: 'naan', sessionId: demoSession.id, name: 'Butter Naan Basket', amount: 240, category: 'shared' },
 ]);
 

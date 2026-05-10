@@ -1,8 +1,18 @@
 import { Edit3, Save, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import CategoryBadge from './CategoryBadge.jsx';
+import { assignableCategories } from '../lib/categories.js';
 
-export default function ItemCard({ item, onDelete, onUpdate }) {
+function suggestedParticipants(category, participants = []) {
+  if (category === 'veg') return participants.filter((participant) => participant.isVeg);
+  if (category === 'nonveg') return participants.filter((participant) => participant.isNonVeg);
+  if (category === 'drink') return participants.filter((participant) => participant.drinks);
+  if (category === 'dessert') return participants.filter((participant) => participant.dessert);
+  if (category === 'alcohol') return participants.filter((participant) => participant.alcohol);
+  return participants;
+}
+
+export default function ItemCard({ item, participants = [], onDelete, onUpdate }) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState({
     name: item.name,
@@ -42,15 +52,15 @@ export default function ItemCard({ item, onDelete, onUpdate }) {
               aria-label="Item amount"
             />
           </div>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            {['veg', 'nonveg', 'drink', 'shared'].map((category) => (
+          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {assignableCategories.map((category) => (
               <button
                 key={category}
                 type="button"
                 onClick={() => setDraft({ ...draft, category })}
                 className={`rounded-md border px-3 py-2 ${
                   draft.category === category
-                    ? 'border-ink bg-ink text-white'
+                    ? 'border-stone-400 bg-stone-500 text-white'
                     : 'border-stone-200 bg-stone-50'
                 }`}
               >
@@ -61,7 +71,7 @@ export default function ItemCard({ item, onDelete, onUpdate }) {
           <div className="mt-3 flex gap-2">
             <button
               type="submit"
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-ink px-3 py-2 text-sm font-semibold text-white"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-stone-500 px-3 py-2 text-sm font-semibold text-white"
             >
               <Save size={16} />
               Save
@@ -89,6 +99,14 @@ export default function ItemCard({ item, onDelete, onUpdate }) {
             <CategoryBadge category={item.category} />
           </div>
           <p className="mt-2 text-xl font-bold">₹{Number(item.amount).toFixed(2)}</p>
+          {participants.length > 0 && (
+            <p className="mt-2 text-xs text-stone-500">
+              Eligible:{' '}
+              {suggestedParticipants(item.category, participants)
+                .map((participant) => participant.name)
+                .join(', ') || 'no matching participants'}
+            </p>
+          )}
         </div>
         <div className="flex">
           <button

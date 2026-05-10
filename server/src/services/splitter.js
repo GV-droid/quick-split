@@ -1,4 +1,4 @@
-const categories = ['veg', 'nonveg', 'drink', 'shared'];
+const categories = ['veg', 'nonveg', 'drink', 'dessert', 'alcohol', 'shared'];
 
 function round(value) {
   return Math.round((value + Number.EPSILON) * 100) / 100;
@@ -9,6 +9,8 @@ function eligibleParticipants(category, participants) {
   if (category === 'veg') return participants.filter((participant) => participant.isVeg);
   if (category === 'nonveg') return participants.filter((participant) => participant.isNonVeg);
   if (category === 'drink') return participants.filter((participant) => participant.drinks);
+  if (category === 'dessert') return participants.filter((participant) => participant.dessert);
+  if (category === 'alcohol') return participants.filter((participant) => participant.alcohol);
   return [];
 }
 

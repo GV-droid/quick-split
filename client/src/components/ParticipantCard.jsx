@@ -1,5 +1,14 @@
-import { Coffee, Edit3, Leaf, Save, Trash2, Utensils, X } from 'lucide-react';
+import { Beer, CakeSlice, Coffee, Edit3, Leaf, Save, Trash2, Utensils, X } from 'lucide-react';
 import { useState } from 'react';
+import { participantPreferences } from '../lib/categories.js';
+
+const preferenceIcons = {
+  isVeg: Leaf,
+  isNonVeg: Utensils,
+  drinks: Coffee,
+  dessert: CakeSlice,
+  alcohol: Beer,
+};
 
 export default function ParticipantCard({ participant, onDelete, onUpdate }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -8,13 +17,15 @@ export default function ParticipantCard({ participant, onDelete, onUpdate }) {
     isVeg: participant.isVeg,
     isNonVeg: participant.isNonVeg,
     drinks: participant.drinks,
+    dessert: participant.dessert,
+    alcohol: participant.alcohol,
   });
 
-  const prefs = [
-    { enabled: participant.isVeg, label: 'Veg', icon: Leaf },
-    { enabled: participant.isNonVeg, label: 'Non-veg', icon: Utensils },
-    { enabled: participant.drinks, label: 'Drinks', icon: Coffee },
-  ];
+  const prefs = participantPreferences.map((preference) => ({
+    ...preference,
+    enabled: participant[preference.key],
+    icon: preferenceIcons[preference.key],
+  }));
 
   function cancelEdit() {
     setDraft({
@@ -22,6 +33,8 @@ export default function ParticipantCard({ participant, onDelete, onUpdate }) {
       isVeg: participant.isVeg,
       isNonVeg: participant.isNonVeg,
       drinks: participant.drinks,
+      dessert: participant.dessert,
+      alcohol: participant.alcohol,
     });
     setIsEditing(false);
   }
@@ -42,12 +55,8 @@ export default function ParticipantCard({ participant, onDelete, onUpdate }) {
             className="w-full rounded-md border border-stone-300 px-3 py-2"
             aria-label="Participant name"
           />
-          <div className="mt-3 grid grid-cols-3 gap-2 text-sm">
-            {[
-              ['isVeg', 'Veg'],
-              ['isNonVeg', 'Non-veg'],
-              ['drinks', 'Drinks'],
-            ].map(([key, label]) => (
+          <div className="mt-3 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3">
+            {participantPreferences.map(({ key, label }) => (
               <label key={key} className="rounded-md bg-stone-100 px-3 py-2">
                 <input
                   type="checkbox"
@@ -62,7 +71,7 @@ export default function ParticipantCard({ participant, onDelete, onUpdate }) {
           <div className="mt-3 flex gap-2">
             <button
               type="submit"
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-ink px-3 py-2 text-sm font-semibold text-white"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-stone-500 px-3 py-2 text-sm font-semibold text-white"
             >
               <Save size={16} />
               Save
@@ -87,12 +96,12 @@ export default function ParticipantCard({ participant, onDelete, onUpdate }) {
         <div>
           <h3 className="text-base font-semibold">{participant.name}</h3>
           <div className="mt-3 flex flex-wrap gap-2">
-            {prefs.map(({ enabled, label, icon: Icon }) => (
+            {prefs.map(({ key, enabled, label, icon: Icon }) => (
               <span
-                key={label}
+                key={key}
                 className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
                   enabled
-                    ? 'bg-ink text-white'
+                    ? 'bg-stone-500 text-white'
                     : 'bg-stone-100 text-stone-400 line-through'
                 }`}
               >

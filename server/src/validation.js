@@ -16,21 +16,29 @@ export const participantSchema = z
     isVeg: z.boolean().default(false),
     isNonVeg: z.boolean().default(false),
     drinks: z.boolean().default(false),
+    dessert: z.boolean().default(false),
+    alcohol: z.boolean().default(false),
   })
-  .refine((value) => value.isVeg || value.isNonVeg || value.drinks, {
+  .refine((value) => value.isVeg || value.isNonVeg || value.drinks || value.dessert || value.alcohol, {
     message: 'Select at least one participant preference',
   });
 
 export const itemSchema = z.object({
   name: z.string().trim().min(1, 'Item name is required').max(80),
   amount: money.refine((value) => value > 0, 'Item amount must be greater than zero'),
-  category: z.enum(['veg', 'nonveg', 'drink', 'shared']),
+  category: z.enum(['veg', 'nonveg', 'drink', 'dessert', 'alcohol', 'shared']),
 });
 
 export const chargesSchema = z.object({
   tax: money.default(0),
   serviceCharge: money.default(0),
   tip: money.default(0),
+});
+
+export const menuMappingSchema = z.object({
+  itemName: z.string().trim().min(1, 'Item name is required').max(80),
+  category: z.enum(['veg', 'nonveg', 'drink', 'dessert', 'alcohol', 'shared', 'unknown']),
+  aliases: z.array(z.string().trim().min(1).max(80)).default([]),
 });
 
 export function parseBody(schema, body) {

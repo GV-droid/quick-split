@@ -27,6 +27,10 @@ export const api = {
       body: JSON.stringify({ title }),
     }),
   getSession: (id) => request(`/sessions/${id}`),
+  deleteSession: (id) =>
+    request(`/sessions/${id}`, {
+      method: 'DELETE',
+    }),
   addParticipant: (sessionId, participant) =>
     request(`/sessions/${sessionId}/participants`, {
       method: 'POST',
@@ -61,4 +65,15 @@ export const api = {
       body: JSON.stringify(charges),
     }),
   getSummary: (sessionId) => request(`/sessions/${sessionId}/summary`),
+  getMenuMappings: () => request('/menu-mappings'),
+  classifyMenuItems: (names) =>
+    request('/menu-mappings/classify', {
+      method: 'POST',
+      body: JSON.stringify({ names }),
+    }),
+  saveMenuMapping: (itemName, mapping) =>
+    request(`/menu-mappings/${encodeURIComponent(itemName)}`, {
+      method: 'PUT',
+      body: JSON.stringify(mapping),
+    }),
 };

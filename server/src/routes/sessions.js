@@ -71,6 +71,15 @@ router.get('/:sessionId', asyncRoute(async (req, res) => {
   res.json({ session });
 }));
 
+router.delete('/:sessionId', asyncRoute(async (req, res) => {
+  const session = await getSessionBundle(req.params.sessionId);
+  ensureSession(session);
+
+  await db.delete(sessions).where(eq(sessions.id, req.params.sessionId));
+  persist();
+  res.json({ ok: true });
+}));
+
 router.post('/:sessionId/participants', asyncRoute(async (req, res) => {
   const session = await getSessionBundle(req.params.sessionId);
   ensureSession(session);

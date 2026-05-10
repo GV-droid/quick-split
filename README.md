@@ -1,6 +1,6 @@
 # Quick Split
 
-Quick Split is a mobile-first restaurant bill splitter for one-time meals. It creates temporary sessions, adds participants and bill items, then splits veg, non-veg, drink, and shared items by participant preference.
+Quick Split is a mobile-first restaurant bill splitter for one-time meals. It creates temporary sessions, adds participants and bill items, then splits veg, non-veg, drink, dessert, alcohol, and shared items by participant preference.
 
 ## Stack
 
@@ -57,6 +57,12 @@ On another device in the same network, use the phone IP with port `5173`.
 - `npm run build` builds the frontend.
 - `npm run start` starts only the API server.
 
+## OCR Menu Classification
+
+The Bill Items screen includes a Scan receipt panel. Use Camera or Gallery to run Tesseract.js OCR in the browser, review the detected rows, correct item names, prices, and categories, then import the reviewed rows into the current session.
+
+The API seeds a local `menu_items` table on startup with 300+ common dishes, drinks, desserts, and alcohol entries. Startup migrations also add participant dessert/alcohol preferences and the custom mapping table for corrected OCR categories. Custom category corrections from the review screen are persisted locally in SQLite, while recent OCR history is kept in browser local storage.
+
 ## API Routes
 
 - `GET /api/health`
@@ -64,17 +70,24 @@ On another device in the same network, use the phone IP with port `5173`.
 - `POST /api/sessions`
 - `GET /api/sessions/:sessionId`
 - `POST /api/sessions/:sessionId/participants`
+- `PUT /api/sessions/:sessionId/participants/:participantId`
 - `DELETE /api/sessions/:sessionId/participants/:participantId`
 - `POST /api/sessions/:sessionId/items`
+- `PUT /api/sessions/:sessionId/items/:itemId`
 - `DELETE /api/sessions/:sessionId/items/:itemId`
 - `PUT /api/sessions/:sessionId/charges`
 - `GET /api/sessions/:sessionId/summary`
+- `GET /api/menu-mappings`
+- `POST /api/menu-mappings/classify`
+- `PUT /api/menu-mappings/:itemName`
 
 ## Splitting Rules
 
 - Veg items split only among veg eaters.
 - Non-veg items split only among non-veg eaters.
 - Drink items split only among drinkers.
+- Dessert items split only among dessert eaters.
+- Alcohol items split only among alcohol-enabled participants.
 - Shared items split among everyone.
 - Tax, service charge, and tip are distributed proportionally by each participant's allocated item subtotal.
 - If an item has no eligible participants, it is reported as unassigned instead of being silently charged to everyone.
