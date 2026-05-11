@@ -15,6 +15,7 @@ Quick Split is a two-package npm workspace.
 - `server/src/app.js` creates the Express app without binding a port so integration tests can import it. When `client/dist` exists, it also serves the built Vite PWA for production hosting.
 - `server/src/seed.js` creates demo data.
 - `server/data/` is generated locally for the SQLite database and should not be treated as source code.
+- `railway.json` pins Railway production deployment to the root build/start commands and `/api/health` healthcheck.
 - `.gitignore` excludes generated dependencies, frontend builds, logs, env files, and local SQLite data.
 
 Tests live near the relevant modules with `.test.js` filenames.
@@ -26,7 +27,7 @@ Tests live near the relevant modules with `.test.js` filenames.
 - `npm run seed` creates or refreshes demo SQLite data.
 - `npm run build` builds the frontend for production.
 - `npm test` runs all unit and integration tests with Node's built-in test runner.
-- `npm run start` starts the backend API and, after `npm run build`, serves the built frontend from `client/dist`.
+- `npm run start` starts the backend API and, after `npm run build`, serves the built frontend from `client/dist`. Use this for production hosting.
 - `npm run build --workspace client` builds just the frontend.
 - `npm run dev --workspace server` starts just the API in watch mode.
 
@@ -47,7 +48,7 @@ OCR is client-side through Tesseract.js. Receipt images from camera or gallery a
 
 The frontend is installable as a PWA. Keep `client/public/manifest.webmanifest`, `client/public/service-worker.js`, and the registration hook in `client/src/registerServiceWorker.js` aligned when changing app shell caching or install metadata. The service worker should not cache API responses because session data is backed by the local Express API and SQLite database.
 
-For single-service Railway deployment, build from the repository root with `npm run build`, start with `npm run start`, mount a volume at `/data`, and set `QUICK_SPLIT_DB_PATH=/data/quicksplit.sqlite`.
+For single-service Railway deployment, build from the repository root with `npm run build`, start with `npm run start`, mount a volume at `/data`, and set `QUICK_SPLIT_DB_PATH=/data/quicksplit.sqlite`. Keep Railway on the production start path; do not run `npm run dev` or Vite dev server in production. `railway.json` should remain aligned with these commands and should healthcheck `/api/health`.
 
 The local menu classification engine uses SQLite tables:
 
