@@ -10,6 +10,7 @@ The app is intentionally local-first for the MVP. OCR runs in the browser with T
 - Participant creation, editing, deletion, and category preferences.
 - Manual bill item creation, editing, and deletion.
 - Receipt scanning from camera or gallery with browser-side OCR.
+- Installable PWA shell with offline reload support for previously visited app assets.
 - Review screen for correcting OCR item names, prices, categories, and import choices.
 - Local menu classification with seeded default menu items and user-corrected mappings.
 - Item categories: veg, non-veg, drink, dessert, alcohol, and shared.
@@ -108,6 +109,17 @@ Build the frontend bundle:
 npm run build --workspace client
 ```
 
+## Railway Deployment
+
+Railway can host Quick Split as one service from the repository root. Use:
+
+- Build command: `npm run build`
+- Start command: `npm run start`
+- Volume mount path: `/data`
+- Environment variable: `QUICK_SPLIT_DB_PATH=/data/quicksplit.sqlite`
+
+The production Express server serves `/api/*` routes and the built Vite PWA from `client/dist`. A Railway volume is required if deployed bill data should survive rebuilds and redeploys.
+
 ## App Workflow
 
 1. Create or open a bill session.
@@ -158,6 +170,10 @@ No paid OCR service, hosted AI service, authentication, or cloud sync is require
 
 ```text
 client/
+  public/
+    manifest.webmanifest
+    service-worker.js
+    icons/
   src/
     components/
     lib/

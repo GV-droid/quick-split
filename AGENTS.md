@@ -5,13 +5,14 @@
 Quick Split is a two-package npm workspace.
 
 - `client/` contains the React + Vite frontend.
+- `client/public/` contains PWA assets copied directly by Vite, including the web app manifest, service worker, and install icon.
 - `client/src/components/` contains reusable UI components such as `ParticipantCard`, `ItemCard`, `SplitSummaryCard`, and `OcrReviewPanel`.
 - `client/src/lib/` contains frontend helpers, including API calls, category metadata, and OCR parsing utilities.
 - `server/` contains the Express API.
 - `server/src/db/` contains Drizzle schema and SQLite setup.
 - `server/src/routes/` contains API route modules, including session routes and menu mapping/classification routes.
 - `server/src/services/` contains business logic, including bill splitting, menu classification, and default menu seeding.
-- `server/src/app.js` creates the Express app without binding a port so integration tests can import it.
+- `server/src/app.js` creates the Express app without binding a port so integration tests can import it. When `client/dist` exists, it also serves the built Vite PWA for production hosting.
 - `server/src/seed.js` creates demo data.
 - `server/data/` is generated locally for the SQLite database and should not be treated as source code.
 - `.gitignore` excludes generated dependencies, frontend builds, logs, env files, and local SQLite data.
@@ -25,7 +26,7 @@ Tests live near the relevant modules with `.test.js` filenames.
 - `npm run seed` creates or refreshes demo SQLite data.
 - `npm run build` builds the frontend for production.
 - `npm test` runs all unit and integration tests with Node's built-in test runner.
-- `npm run start` starts only the backend API.
+- `npm run start` starts the backend API and, after `npm run build`, serves the built frontend from `client/dist`.
 - `npm run build --workspace client` builds just the frontend.
 - `npm run dev --workspace server` starts just the API in watch mode.
 
@@ -43,6 +44,10 @@ Extras (`tax`, `serviceCharge`, and `tip`) are distributed proportionally by eac
 Supported item categories are `veg`, `nonveg`, `drink`, `dessert`, `alcohol`, and `shared`. Menu classification can also return `unknown`, but persisted bill items should use an assignable category.
 
 OCR is client-side through Tesseract.js. Receipt images from camera or gallery are preprocessed in `client/src/lib/ocr.js`, parsed into review rows, classified through the local API, and imported only after user review. Preserve manual item creation and editing when changing OCR behavior.
+
+The frontend is installable as a PWA. Keep `client/public/manifest.webmanifest`, `client/public/service-worker.js`, and the registration hook in `client/src/registerServiceWorker.js` aligned when changing app shell caching or install metadata. The service worker should not cache API responses because session data is backed by the local Express API and SQLite database.
+
+For single-service Railway deployment, build from the repository root with `npm run build`, start with `npm run start`, mount a volume at `/data`, and set `QUICK_SPLIT_DB_PATH=/data/quicksplit.sqlite`.
 
 The local menu classification engine uses SQLite tables:
 
