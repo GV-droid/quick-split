@@ -7,7 +7,8 @@ await seedDefaultMenuItems();
 
 const app = createApp();
 const port = process.env.PORT || 4000;
+const host = '0.0.0.0';
 
-app.listen(port, () => {
-  console.log(`Quick Split API listening on http://localhost:${port}`);
+app.listen(port, host, () => {
+  console.log(`Quick Split API listening on http://${host}:${port}`);
 });
